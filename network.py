@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 def readFile():
-    wn = wntr.network.WaterNetworkModel('networks/Net3.inp')
+    wn = wntr.network.WaterNetworkModel('networks/Net2.inp')
     return wn
 
 def runSimulation(wn):
