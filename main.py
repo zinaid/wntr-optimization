@@ -20,13 +20,13 @@ if __name__ == "__main__":
     print(getPressure(results))
     print("Maximum pressure: ", getMaxPressure(pressure))
     
-    threshold = 0
+    min_pressure = 0
     max_pressure = 84
     resilience_target = 3.7
     
-    print("Initial MRI: ", np.mean(MRI(wn, results, pressure, threshold)))
+    print("Initial MRI: ", np.mean(MRI(wn, results, pressure, min_pressure)))
 
-    res = optimize_water_network(wn, threshold, max_pressure, resilience_target)
+    res = optimize_water_network(wn, min_pressure, max_pressure, resilience_target)
 
     n_evals = np.array([e.evaluator.n_eval for e in res.history])
     opt = np.array([e.opt[0].F for e in res.history])
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     pressure = getPressure(results)
     print(pressure)
 
-    if(checkMinConstraints(wn, results, threshold)):
+    if(checkMinConstraints(wn, results, min_pressure)):
         print("Minimum pressure constraints are satisfied.")
     else:
         print("Minimum pressure constraints are not satisfied.")
@@ -61,4 +61,4 @@ if __name__ == "__main__":
         print("Maximum pressure constraints are not satisfied.")
         
     print("Final MRI:")
-    print(np.mean(MRI(wn, results, pressure, threshold)))
+    print(np.mean(MRI(wn, results, pressure, resilience_target)))
