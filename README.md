@@ -20,6 +20,74 @@ where $Cost(x_i)$ represents a cost of each pipe, $l_i$ represents a length of a
 
 Each diemeter size has a specific cost. Cost is given in the Table 1.
 
+<table border="1">
+  <tr>
+    <th>Diameter (in)</th>
+    <th>Diameter (m)</th>
+    <th>Annual Cost ($/m/yr)</th>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>0.102</td>
+    <td>8.31</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td>0.152</td>
+    <td>10.10</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td>0.203</td>
+    <td>12.10</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td>0.254</td>
+    <td>12.96</td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td>0.305</td>
+    <td>15.22</td>
+  </tr>
+  <tr>
+    <td>14</td>
+    <td>0.356</td>
+    <td>16.62</td>
+  </tr>
+  <tr>
+    <td>16</td>
+    <td>0.406</td>
+    <td>19.41</td>
+  </tr>
+  <tr>
+    <td>18</td>
+    <td>0.457</td>
+    <td>22.20</td>
+  </tr>
+  <tr>
+    <td>20</td>
+    <td>0.508</td>
+    <td>24.66</td>
+  </tr>
+  <tr>
+    <td>24</td>
+    <td>0.610</td>
+    <td>35.69</td>
+  </tr>
+  <tr>
+    <td>28</td>
+    <td>0.711</td>
+    <td>40.08</td>
+  </tr>
+  <tr>
+    <td>30</td>
+    <td>0.762</td>
+    <td>42.60</td>
+  </tr>
+</table>
+
 ### Constraints:
 
 #### Pressure constraint
