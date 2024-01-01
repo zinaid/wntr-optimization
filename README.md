@@ -98,9 +98,9 @@ $P_{low}<=P_{node}<=P_{high}$.
 
 This is maintained using a penalty function on a minimization objective.
 
-$P_{low} = \sum_{node}max(0, P_{min}-P_{node})$
+$P_{low} = \sum_{node} max(0, P_{min}-P_{node})$
 
-$P_{high} = \sum_{node}max(0, P_{node}-P_{max})$
+$P_{high} = \sum_{node} max(0, P_{node}-P_{max})$
 
 $P_{pressure}=P_{low}+P_{high}$.
 
