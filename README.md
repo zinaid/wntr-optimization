@@ -14,7 +14,7 @@ $lowerBound<=x_i<=upperBound$ where lowerBound is set to 0.1 and upperBound is s
 
 ### Objective function:
 
-$MIN f(x) = \sum_{i=1}^{n}{Cost(x_i)\cdot l_i}$
+$$MIN f(x) = \sum_{i=1}^{n}{Cost(x_i)\cdot l_i}$$
 
 where $Cost(x_i)$ represents a cost of each pipe, $l_i$ represents a length of a pipe. Pipe cost is directly connected to a diametar size.
 
