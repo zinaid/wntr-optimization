@@ -510,7 +510,7 @@ Target MRI: 2.9
 
 ### Convergence plot
 
-<img src="images/example2/net2conv.png" />
+<img src="images/example2/net2.png" />
 
 ### Final results and constraint checks
 
