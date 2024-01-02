@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from optimization import optimize_water_network
-from network import readFile, runSimulation, getPipeCost, getPressure, getMaxPressure, checkMinConstraints, checkMaxConstraints, updateSolution, printOptimalSolution, MRI
+from network import readFile, runSimulation, getPipeCost, getPressure, getMaxPressure, checkMinConstraints, checkMaxConstraints, updateSolution, printOptimalSolution, MRI, runCriticalityAnalysis
 
 if __name__ == "__main__":
     print("Program starts")
@@ -19,14 +19,18 @@ if __name__ == "__main__":
     print("Starting list of pressures:")
     print(getPressure(results))
     print("Maximum pressure: ", getMaxPressure(pressure))
-    
+        
     min_pressure = 0
-    max_pressure = 84
-    resilience_target = 3.7
+    max_pressure = 94
+    resilience_target = 0.35
     
     print("Initial MRI: ", np.mean(MRI(wn, results, pressure, min_pressure)))
 
-    res = optimize_water_network(wn, min_pressure, max_pressure, resilience_target)
+    junction_max = runCriticalityAnalysis(wn, min_pressure)
+    print("Initial junction impact:", junction_max)
+    # We set junction target to be the same as the initial network junction impact
+    junction_target = junction_max
+    res = optimize_water_network(wn, min_pressure, max_pressure, resilience_target, junction_target)
 
     n_evals = np.array([e.evaluator.n_eval for e in res.history])
     opt = np.array([e.opt[0].F for e in res.history])
@@ -61,4 +65,7 @@ if __name__ == "__main__":
         print("Maximum pressure constraints are not satisfied.")
         
     print("Final MRI:")
-    print(np.mean(MRI(wn, results, pressure, resilience_target)))
+    print(np.mean(MRI(wn, results, pressure, min_pressure)))
+
+    final_junction = runCriticalityAnalysis(wn, min_pressure)
+    print("Final junction impact:", final_junction)
