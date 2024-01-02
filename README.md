@@ -180,7 +180,7 @@ Initial MRI:  0.3715616328549535 so we set a target MRI for our optimized networ
 
 ### Final results and constraints check:
 
-Final cost: 238469.45448000001
+Final cost: <b>238469.45448000001</b>
 
 Final MRI: 0.35037240703556666
 
@@ -484,11 +484,11 @@ Final junction impact: 0
 
 ## EXAMPLE 2 - NET2 without pipe criticality analyis
 
-Cost optimization of Net2 using GA with population number 40 and 200 iterations. 
+Cost optimization of Net2 using GA with population number 40 and 400 iterations. 
 
 $$MIN f(x) = \sum_{i=1}^{n} Cost(x_i)\cdot l_i +P_{pressure}+P_{resilience}$$
 
-n = 35.
+n = 41.
 
 ### Visualization of network
 
@@ -496,7 +496,7 @@ n = 35.
 
 ### Initial costs and constraints
 
-Initial pipe cost:  149603.15519999995
+Initial pipe cost:  <b>149603.15519999995</b>
 
 By setting thresholds to the values 3.516 of minimum pressure (5psi) and maximum pressure 84 (took the same value as initial maximum pressure of the network). With 5psi as a threshold we obtain initial MRI as 2.938242085130738 so we set our threshold for MRI as 2.9.
 
@@ -514,7 +514,7 @@ Target MRI: 2.9
 
 ### Final results and constraint checks
 
-Final cost: 115005.76440000003
+Final cost: <b>115005.76440000003</b>
 
 Minimum pressure constraints are satisfied.
 
