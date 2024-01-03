@@ -16,7 +16,7 @@ class WaterNetworkProblem(ElementwiseProblem):
         self.resilience_target = resilience_target
         self.junction_target = junction_target
         xl = [0.1] * n_var
-        xu = [0.762] * n_var
+        xu = [1.0] * n_var
         super().__init__(n_var=n_var, n_obj=1, n_ieq_constr=1, xl=xl, xu=xu)
 
     def _evaluate(self, x, out):
@@ -41,10 +41,10 @@ class WaterNetworkProblem(ElementwiseProblem):
 
         # If we want to turn off number of junction impact just comment these simulations
         # and remove junction penalty
-        num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
-        junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
+        #num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
+        #junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
 
-        total_penalty = pressure_penalty_low + pressure_penalty_high + resilience_penalty + junction_penalty
+        total_penalty = pressure_penalty_low + pressure_penalty_high + resilience_penalty
 
         objective = total_cost
         out["F"] = np.array([objective])
@@ -53,6 +53,6 @@ class WaterNetworkProblem(ElementwiseProblem):
 def optimize_water_network(wn, threshold, max_pressure, resilience_target, junction_target):
     water_network_problem = WaterNetworkProblem(wn, threshold, max_pressure, resilience_target, junction_target)
     termination = get_termination("n_gen", 200)
-    algorithm = GA(pop_size=20, eliminate_duplicates=True)
+    algorithm = GA(pop_size=40, eliminate_duplicates=True)
     res = minimize(water_network_problem, algorithm, termination, seed=1, verbose=True, save_history=True)
     return res

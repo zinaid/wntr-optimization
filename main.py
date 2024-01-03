@@ -19,11 +19,10 @@ if __name__ == "__main__":
     print("Starting list of pressures:")
     print(getPressure(results))
     print("Maximum pressure: ", getMaxPressure(pressure))
-
-    # This needs to be adapted for a network    
+        
     min_pressure = 0.1
     max_pressure = 68
-    resilience_target = 0.3
+    resilience_target = 0.5
     
     print("Initial MRI: ", np.mean(MRI(wn, results, pressure, min_pressure)))
 
