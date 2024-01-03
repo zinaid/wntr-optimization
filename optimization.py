@@ -41,10 +41,10 @@ class WaterNetworkProblem(ElementwiseProblem):
 
         # If we want to turn off number of junction impact just comment these simulations
         # and remove junction penalty
-        #num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
-        #junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
+        num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
+        junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
 
-        total_penalty = pressure_penalty_low + pressure_penalty_high + resilience_penalty
+        total_penalty = pressure_penalty_low + pressure_penalty_high + resilience_penalty + junction_penalty
 
         objective = total_cost
         out["F"] = np.array([objective])

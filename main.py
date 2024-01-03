@@ -20,9 +20,9 @@ if __name__ == "__main__":
     print(getPressure(results))
     print("Maximum pressure: ", getMaxPressure(pressure))
         
-    min_pressure = 0.1
-    max_pressure = 68
-    resilience_target = 0.5
+    min_pressure = 3.516
+    max_pressure = 100
+    resilience_target = 0.35
     
     print("Initial MRI: ", np.mean(MRI(wn, results, pressure, min_pressure)))
 
