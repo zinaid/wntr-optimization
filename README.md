@@ -158,7 +158,13 @@ $$MIN f(x) = \sum_{i=1}^{n} Cost(x_i)\cdot l_i +P_{pressure}+P_{resilience}+P_{j
 
 We have not included first pipe (Pipe number 10) in our analysis because that is the critical pipe that when turned off affects all other pipes (Start of the network).
 
+This is the net structure:
+
 <img src="images/example1/net1structure.png" />
+
+These are included pipes in criticality analysis.
+
+<img src="images/example1/net1includedpipes.png" />
 
 ### Initial costs and descriptions
 
