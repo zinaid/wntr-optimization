@@ -20,9 +20,9 @@ if __name__ == "__main__":
     print(getPressure(results))
     print("Maximum pressure: ", getMaxPressure(pressure))
         
-    min_pressure = 0
-    max_pressure = 94
-    resilience_target = 0.35
+    min_pressure = 0.1
+    max_pressure = 68
+    resilience_target = 0.3
     
     print("Initial MRI: ", np.mean(MRI(wn, results, pressure, min_pressure)))
 
@@ -31,7 +31,6 @@ if __name__ == "__main__":
     # We set junction target to be the same as the initial network junction impact
     junction_target = junction_max
     res = optimize_water_network(wn, min_pressure, max_pressure, resilience_target, junction_target)
-
     n_evals = np.array([e.evaluator.n_eval for e in res.history])
     opt = np.array([e.opt[0].F for e in res.history])
 

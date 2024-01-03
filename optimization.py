@@ -53,6 +53,6 @@ class WaterNetworkProblem(ElementwiseProblem):
 def optimize_water_network(wn, threshold, max_pressure, resilience_target, junction_target):
     water_network_problem = WaterNetworkProblem(wn, threshold, max_pressure, resilience_target, junction_target)
     termination = get_termination("n_gen", 200)
-    algorithm = GA(pop_size=40, eliminate_duplicates=True)
+    algorithm = GA(pop_size=20, eliminate_duplicates=True)
     res = minimize(water_network_problem, algorithm, termination, seed=1, verbose=True, save_history=True)
     return res

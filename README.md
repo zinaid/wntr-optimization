@@ -118,7 +118,7 @@ Besides pressure constraints we introduce a resilience constraint where we want 
 
 $MRI_{current}>=MRI_{target}$
 
-We are interested in a Modified Resilience Index (MRI). The modified resilience index is the total surplus power available at demand junctions as a percentage of the total minimum required power at demand junctions. The metric can be computed as a timeseries for each junction or as a system average timeseries. We use mean value of a total system average timesires and maintain the resilience metric with another penalty constraint.
+We are interested in a Modified Resilience Index (MRI). The modified resilience index is the total surplus power available at demand junctions as a percentage of the total minimum required power at demand junctions. The metric can be computed as a timeseries for each junction or as a system average timeseries. We use mean value of a total system average timeseries and maintain the resilience metric with another penalty constraint.
 
 $MRI =\frac{∑_{j=1}^N q_j (ha_j − hr_j)}{∑_{j=1}^N q_jhr_j}\times 100$.
 
@@ -1072,8 +1072,6 @@ Final cost: 1183046.8
 Final MRI: 0.5942017520079479
 
 Final junction impact: 115
-
-Final MRI: 0.488669265983884
 
 Minimum and maximum pressure constraints are satisfied also.
 
