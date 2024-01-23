@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from optimization import optimize_water_network
-from network import readFile, plot_network_with_consumers, remove_small_diameter_pipes, getJunctionPressures, getStartingPressures, getMinPressure, runSimulation, getPipeCost, getPressure, getMaxPressure, checkMinConstraints, updateSolution, printOptimalSolution, runCriticalityAnalysis
+from network import readFile, saveFile, plot_network_with_consumers, remove_small_diameter_pipes, getJunctionPressures, getStartingPressures, getMinPressure, runSimulation, getPipeCost, getPressure, getMaxPressure, checkMinConstraints, updateSolution, printOptimalSolution, runCriticalityAnalysis
 
 if __name__ == "__main__":
     print("####Program starts####")
-    wn = readFile("networks/19Pipes.inp")
+    network_name = "19Pipes"
+    wn = readFile("networks/"+network_name+".inp")
     print("####Initial readings####")
     print("Initial pipe cost: ", getPipeCost(wn))
 
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     print(junction_pressures)
 
     plot_network_with_consumers(wn, junction_pressures)
+    saveFile(wn, network_name)
 
     #final_junction = runCriticalityAnalysis(wn, min_pressure)
     #print("Final junction impact:", final_junction)

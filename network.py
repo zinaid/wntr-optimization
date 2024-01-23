@@ -7,6 +7,9 @@ def readFile(network):
     wn = wntr.network.WaterNetworkModel(network)
     return wn
 
+def saveFile(network, name):
+    wntr.network.write_inpfile(network, "networks/new_networks/"+name+"_new.inp", version=2.2)
+
 def runSimulation(wn):
     wn.options.hydraulic.demand_model = 'PDD'
     wn.options.hydraulic.required_pressure = 21.097
