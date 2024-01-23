@@ -4,55 +4,61 @@ from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.optimize import minimize
 from pymoo.termination import get_termination
 from pymoo.core.problem import ElementwiseProblem
-from network import runSimulation, getPipeCost, getPressure, MRI, runCriticalityAnalysis
+from network import runSimulation, getPipeCost, runCriticalityAnalysis, remove_small_diameter_pipes
+import copy
+import networkx as nx
 
 class WaterNetworkProblem(ElementwiseProblem):
 
-    def __init__(self, wn, min_pressure, max_pressure, resilience_target, junction_target):
+    def __init__(self, wn, min_pressure, junction_target, diameter_threshold):
         self.wn = wn
         self.min_pressure = min_pressure
-        self.max_pressure = max_pressure
         n_var = len(wn.link_name_list)
-        self.resilience_target = resilience_target
         self.junction_target = junction_target
-        xl = [0.1] * n_var
-        xu = [1.0] * n_var
+        self.diameter_threshold = diameter_threshold
+        xl = [0.0] * n_var
+        xu = [0.762] * n_var
         super().__init__(n_var=n_var, n_obj=1, n_ieq_constr=1, xl=xl, xu=xu)
 
     def _evaluate(self, x, out):
-        for i, (link_name, link) in enumerate(self.wn.links(wntr.network.Pipe)):
+        wn_copy = copy.deepcopy(self.wn)
+
+        for i, (link_name, link) in enumerate(wn_copy.links(wntr.network.Pipe)):
             link.diameter = x[i]
 
-        results = runSimulation(self.wn)
-        total_cost = getPipeCost(self.wn)
-        mri = MRI(self.wn, results, getPressure(results), self.min_pressure)
+        remove_small_diameter_pipes(wn_copy, self.diameter_threshold)
+        total_cost = getPipeCost(wn_copy)
 
+        G = wn_copy.to_graph()
+        uG = G.to_undirected()
+
+        connectivity_penalty = 0.0
         pressure_penalty_low = 0.0
-        for node_name, node in self.wn.nodes(wntr.network.Junction):
-            pressure = results.node['pressure'].loc[:, node_name]
-            pressure_penalty_low += np.maximum(0, self.min_pressure - pressure).sum()
+        if nx.is_connected(uG) is True:
+            connectivity_penalty = 0.0
+            results = runSimulation(wn_copy)
 
-        pressure_penalty_high = 0.0
-        for node_name, node in self.wn.nodes(wntr.network.Junction):
-            pressure = results.node['pressure'].loc[:, node_name]
-            pressure_penalty_high += np.maximum(0, pressure - self.max_pressure).sum()
+            pressure_penalty_low = 0.0
+            for node_name, node in wn_copy.nodes(wntr.network.Junction):
+                pressure = results.node['pressure'].loc[:, node_name].min()
+                pressure_penalty_low += np.maximum(0, self.min_pressure[node_name] - pressure).sum()
 
-        resilience_penalty = np.maximum(0, self.resilience_target - np.mean(mri))
+                # If we want to turn off number of junction impact just comment these simulations
+                # and remove junction penalty
+                #num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
+                #junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
+        else:
+            connectivity_penalty = 100.0
 
-        # If we want to turn off number of junction impact just comment these simulations
-        # and remove junction penalty
-        num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
-        junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
-
-        total_penalty = pressure_penalty_low + pressure_penalty_high + resilience_penalty + junction_penalty
+        total_penalty = pressure_penalty_low + connectivity_penalty
 
         objective = total_cost
         out["F"] = np.array([objective])
         out["G"] = np.array([total_penalty])
 
-def optimize_water_network(wn, threshold, max_pressure, resilience_target, junction_target):
-    water_network_problem = WaterNetworkProblem(wn, threshold, max_pressure, resilience_target, junction_target)
-    termination = get_termination("n_gen", 200)
-    algorithm = GA(pop_size=40, eliminate_duplicates=True)
+def optimize_water_network(wn, threshold, junction_target, diameter_threshold):
+    water_network_problem = WaterNetworkProblem(wn, threshold, junction_target, diameter_threshold)
+    termination = get_termination("n_gen", 400)
+    algorithm = GA(pop_size=20, eliminate_duplicates=True)
     res = minimize(water_network_problem, algorithm, termination, seed=1, verbose=True, save_history=True)
     return res

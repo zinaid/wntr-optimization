@@ -1,20 +1,25 @@
 import wntr
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
-def readFile():
-    wn = wntr.network.WaterNetworkModel('networks/Net1.inp')
+def readFile(network):
+    wn = wntr.network.WaterNetworkModel(network)
     return wn
 
 def runSimulation(wn):
     wn.options.hydraulic.demand_model = 'PDD'
-    wn.options.hydraulic.required_pressure = 1
+    wn.options.hydraulic.required_pressure = 21.097
     sim = wntr.sim.EpanetSimulator(wn)
     results = sim.run_sim()
     return results
 
 def getPressure(results):
     pressure = results.node['pressure']
+    return pressure
+
+def getJunctionPressures(wn, results):
+    pressure = results.node['pressure'].loc[:,wn.junction_name_list]
     return pressure
 
 def getMaxPressure(pressure):
@@ -125,9 +130,19 @@ def runCriticalityAnalysis(wn, pressure_threshold):
 
 def checkMinConstraints(wn, results, min_pressure):
     for node_name, node in wn.nodes(wntr.network.Junction):
-        if (results.node['pressure'].loc[:, node_name] < min_pressure).any():
+        if (results.node['pressure'].loc[:, node_name] < min_pressure[node_name]).any():
             return False
     return True
+
+def getStartingPressures(wn, results):
+    pressure_min_dict = {}
+
+    for node_name, node in wn.nodes(wntr.network.Junction):
+        pressure_min = results.node['pressure'].loc[:, node_name].min()
+        pressure_min_dict[node_name] = pressure_min
+
+    pressure_min_series = pd.Series(pressure_min_dict, dtype=float)
+    return pressure_min_series
 
 def checkMaxConstraints(wn, results, max_pressure):
     for node_name, node in wn.nodes(wntr.network.Junction):
@@ -144,3 +159,39 @@ def updateSolution(wn, res):
     for i, link_name in enumerate(wn.link_name_list):
         link = wn.get_link(link_name)
         link.diameter = res.X[i]
+
+def remove_small_diameter_pipes(wn, diameter_threshold):
+    removed_pipes = []
+
+    pipes_to_remove = [link_name for link_name, link in wn.links(wntr.network.Pipe) if link.diameter < diameter_threshold]
+
+    for link_name in pipes_to_remove:
+        wn.remove_link(link_name)
+        removed_pipes.append(link_name)
+    
+    return removed_pipes
+
+def plot_network_with_consumers(wn, junction_pressures):
+    print(junction_pressures)
+    fig, ax = plt.subplots()
+    for node_name, node in wn.nodes(wntr.network.Junction):
+        if node_name in junction_pressures:
+            demand = float(junction_pressures[node_name][0])
+            ax.annotate(f"{demand:.5f}", (node.coordinates[0], node.coordinates[1]),
+                        xytext=(5, -5), textcoords='offset points',
+                        fontsize=10, color='red', ha='right', va='top')
+
+    for link_name, link in wn.links(wntr.network.Pipe):
+        start_node = wn.get_link(link_name).start_node_name
+        end_node = wn.get_link(link_name).end_node_name
+        line_width = link.diameter * 3 
+        x_start, y_start = wn.nodes[start_node].coordinates
+        x_end, y_end = wn.nodes[end_node].coordinates
+        ax.plot([x_start, x_end], [y_start, y_end], linewidth=line_width, color='black', marker='')
+        ax.text((x_start + x_end) / 2, (y_start + y_end) / 2, link_name, fontsize=10, color='blue', ha='left', va='bottom')
+    # Plot nodes as black dots
+    for node_name, node in wn.nodes(wntr.network.Junction):
+        ax.plot(node.coordinates[0], node.coordinates[1], 'ko')
+
+    plt.tight_layout()
+    plt.show()
