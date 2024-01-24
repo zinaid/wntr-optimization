@@ -4,22 +4,6 @@ We are performing cost optimization of a water network system using water networ
 
 ## MATHEMATICAL FORMULATION
 
-### Decision variables:
-
-Decision variables are diameters $x_i$ for each pipe with index $i$.
-
-The objective is to minimize the total cost of the pipes while satisfying certain constraints. We also implement removal of some pipes from the network. Those pipes that are redundant are removed from the network, while maintaing the desired constraints.
-
-To achieve this we set diameter sizes in these boundaries: 
-
-$$lowerBound<=x_i<= upperBound $$ 
-
-The variable ```upperBound``` is set according to the used network, but the lower bound is set to 0 (WITH THIS WE ACHIEVE TOTAL REMOVAL OF SOME PIPES). We remove those pipes whose diameter is smaller than ```0.1```:
-
-$$x_i <= x_{min}$$
-
-where ```X_min = 0.1```.
-
 ## OBJECTIVE FUNCTION
 
 $$MIN f(x) = \sum_{i=1}^{n}{Cost(x_i)\cdot l_i}$$
@@ -110,7 +94,7 @@ To achieve this we set diameter sizes in these boundaries:
 
 $$lowerBound<=x_i<= upperBound $$ 
 
-The variable ```upperBound``` is set according to the used network, but the lower bound is set to ```0``` (WITH THIS WE ACHIEVE TOTAL REMOVAL OF SOME PIPES). We remove those pipes whose diameter is smaller than ```0.1```:
+The variable ```upperBound``` is set according to the used network (we use 0.762), but the lower bound is set to ```0``` (WITH THIS WE ACHIEVE TOTAL REMOVAL OF SOME PIPES). We remove those pipes whose diameter is smaller than ```0.1```:
 
 $$x_i <= X_{min}$$
 
@@ -152,21 +136,23 @@ We perform criticality analysis by doing <b>n+1</b> simulations where we turn of
 
 $P_{junction} = max(0, maxJunctions - simJunctions)$
 
-Closing some pipes can lead to incorrect operation of the simulation (wntr simulation cannot converge, consumers' needs cannot be met and because of that simulation automatically opens some pipes even though we have previously closed them). We solved that problem with try catch blocks on simulation calls, which catch errors and warnings for each simulation and penalize incorrect simulations with a high penalty.
+Closing some pipes can lead to incorrect operation of the simulation (wntr simulation cannot converge, consumers' needs cannot be met). We solved that problem with try catch blocks on simulation calls, which catch errors and warnings for each simulation but enables simulation to continue.
 
 ### FINAL OBJECTIVE FUNCTION
 
-$$MIN f(x) = \sum_{i=1}^{n} Cost(x_i)\cdot l_i +P_{pressure}+P_{resilience}+P_{junction}$$
+$$MIN f(x) = \sum_{i=1}^{n} Cost(x_i)\cdot l_i +P_{pressure}+P_{junction} + P_{connectivity}$$
 
 ## CODE STRUCTURE
 
-networks -> holds INP files of networks.
+networks -> holds INP files of networks (We used Modified 19 Pipes Network, Fourteen Pipes Networ and Anytown Network). Here are also saved final INP files from optimization process.
 
 main.py -> starting point of our program, where we define thresholds, print starting values of cost, pressures, diameters and call criticality analysis. Call optimization and then print final values, draw network and perform final criticality analysis.
 
-network.py -> all wntr helper functions that we use, like file include, simulation run, pressure extractions, cost calculation, diameters update, pipe criticality, plotting and etc.
+network.py -> all wntr helper functions that we use, like file include, simulation run, pressure extractions, cost calculation, diameters update, plotting and etc.
 
-optimization.py -> definition of optimization algorithm and proces, and definition of an objective function (uses pymoo library for optimization).
+criticality.py -> criticality analysis of a network. In this file we obtain a number of impacted junctions and if needed plot criticality analysis.
+
+optimization.py -> definition of optimization algorithm and proces, and definition of an objective function (uses <b>pymoo</b> library for optimization).
 
 ## EXAMPLES
 
@@ -180,7 +166,7 @@ The network with it's pressures is shown in Figure 2.
 
 Initial cost is: <b>134505.192</b>
 
-We want to minimize the cost, remove redundant pipes while maintaining pressures from the Figure 2.
+We want to minimize the cost, remove redundant pipes while maintaining pressures from the Figure 2. We are using GA with a population of 20 and 400 generations. 
 
 ```
 ####Program starts####
@@ -225,30 +211,54 @@ Initial minimum pressures for nodes
 12    28.490692
 dtype: float64
 Starting list of pressures for whole network:
-name            1          2          3          4          5  ...         10         11         12  R-A  R-B
-0       35.710991  32.209930  28.563152  31.399393  28.679264  ...  29.114296  28.490261  28.490692  0.0  0.0
-3600    35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-7200    35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-10800   35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-14400   35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-...           ...        ...        ...        ...        ...  ...        ...        ...        ...  ...  ...
-590400  35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-594000  35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-597600  35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-601200  35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
-604800  35.710976  32.209911  28.563131  31.399551  28.679663  ...  29.114273  28.490177  28.490875  0.0  0.0
+name            1          2          3  ...         12  R-A  R-B
+0       35.710991  32.209930  28.563152  ...  28.490692  0.0  0.0
+3600    35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+7200    35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+10800   35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+14400   35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+...           ...        ...        ...  ...        ...  ...  ...
+590400  35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+594000  35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+597600  35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+601200  35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
+604800  35.710976  32.209911  28.563131  ...  28.490875  0.0  0.0
 
 [169 rows x 14 columns]
 Starting list of Junction(consumers) pressures:
-name            1          2          3          4          5  ...          8          9         10         11         120       35.710991  32.209930  28.563152  31.399393  28.679264  ...  41.795975  35.207062  29.114296  28.490261  28.4906923600    35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.4908757200    35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.49087510800   35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.49087514400   35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875...           ...        ...        ...        ...        ...  ...        ...        ...        ...        ...        ...590400  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875594000  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875597600  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875601200  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875604800  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875
+name            1          2          3  ...         10         11         12
+0       35.710991  32.209930  28.563152  ...  29.114296  28.490261  28.490692
+3600    35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+7200    35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+10800   35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+14400   35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+...           ...        ...        ...  ...        ...        ...        ...
+590400  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+594000  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+597600  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+601200  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+604800  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+
 [169 rows x 12 columns]
 Maximum pressure:  41.795982
 Minimum pressure:  28.4635
-name            1          2          3          4          5  ...          8          9         10         11         120       35.710991  32.209930  28.563152  31.399393  28.679264  ...  41.795975  35.207062  29.114296  28.490261  28.4906923600    35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.4908757200    35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.49087510800   35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.49087514400   35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875...           ...        ...        ...        ...        ...  ...        ...        ...        ...        ...        ...590400  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875594000  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875597600  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875601200  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875604800  35.710976  32.209911  28.563131  31.399551  28.679663  ...  41.795982  35.207039  29.114273  28.490177  28.490875
+name            1          2          3  ...         10         11         12
+0       35.710991  32.209930  28.563152  ...  29.114296  28.490261  28.490692
+3600    35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+7200    35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+10800   35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+14400   35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+...           ...        ...        ...  ...        ...        ...        ...
+590400  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+594000  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+597600  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+601200  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+604800  35.710976  32.209911  28.563131  ...  29.114273  28.490177  28.490875
+
 [169 rows x 12 columns]
 ####Starting optimization####
 =================================================================================
-n_gen  |  n_eval  |     cv_min    |     cv_avg    |     f_avg     |     f_min
+n_gen  |  n_eval  |     cv_min    |     cv_avg    |     f_avg     |     f_min    
 =================================================================================
      1 |       20 |  0.000000E+00 |  2.986912E+01 |  2.366354E+05 |  2.112477E+05
      2 |       40 |  0.000000E+00 |  0.000000E+00 |  2.299401E+05 |  1.824825E+05
@@ -674,25 +684,49 @@ Optimal Solutions:
 0.42057446150602235
 Final cost: 80761.02720000001
 Final list of pressures for whole network:
-name            1          2          3          4           5  ...         10         11         12  R-A  R-B
-0       35.883934  32.243259  29.195257  32.243259  116.655899  ...  29.268463  29.195257  29.195257  0.0  0.0
-3600    35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268463  29.195255  29.195255  0.0  0.0
-7200    35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268459  29.195255  29.195255  0.0  0.0
-10800   35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268463  29.195255  29.195255  0.0  0.0
-14400   35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268463  29.195255  29.195255  0.0  0.0
-...           ...        ...        ...        ...         ...  ...        ...        ...        ...  ...  ...
-590400  35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268459  29.195255  29.195255  0.0  0.0
-594000  35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268463  29.195255  29.195255  0.0  0.0
-597600  35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268463  29.195255  29.195255  0.0  0.0
-601200  35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268463  29.195255  29.195255  0.0  0.0
-604800  35.883934  32.243256  29.195255  32.243256  116.655891  ...  29.268459  29.195255  29.195255  0.0  0.0
+name            1          2          3  ...         12  R-A  R-B
+0       35.883934  32.243259  29.195257  ...  29.195257  0.0  0.0
+3600    35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+7200    35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+10800   35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+14400   35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+...           ...        ...        ...  ...        ...  ...  ...
+590400  35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+594000  35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+597600  35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+601200  35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
+604800  35.883934  32.243256  29.195255  ...  29.195255  0.0  0.0
 
 [169 rows x 14 columns]
 Minimum pressure constraints are satisfied.
 Final list of Junction(consumers) pressures:
-name            1          2          3          4           5  ...          8         9         10         11         120       35.883934  32.243259  29.195257  32.243259  116.655899  ...  42.257084  35.59005  29.268463  29.195257  29.1952573600    35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.1952557200    35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268459  29.195255  29.19525510800   35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.19525514400   35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255...           ...        ...        ...        ...         ...  ...        ...       ...        ...        ...        ...590400  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268459  29.195255  29.195255594000  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255597600  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255601200  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255604800  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268459  29.195255  29.195255
+name            1          2          3  ...         10         11         12
+0       35.883934  32.243259  29.195257  ...  29.268463  29.195257  29.195257
+3600    35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+7200    35.883934  32.243256  29.195255  ...  29.268459  29.195255  29.195255
+10800   35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+14400   35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+...           ...        ...        ...  ...        ...        ...        ...
+590400  35.883934  32.243256  29.195255  ...  29.268459  29.195255  29.195255
+594000  35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+597600  35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+601200  35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+604800  35.883934  32.243256  29.195255  ...  29.268459  29.195255  29.195255
+
 [169 rows x 12 columns]
-name            1          2          3          4           5  ...          8         9         10         11         120       35.883934  32.243259  29.195257  32.243259  116.655899  ...  42.257084  35.59005  29.268463  29.195257  29.1952573600    35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.1952557200    35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268459  29.195255  29.19525510800   35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.19525514400   35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255...           ...        ...        ...        ...         ...  ...        ...       ...        ...        ...        ...590400  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268459  29.195255  29.195255594000  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255597600  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255601200  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268463  29.195255  29.195255604800  35.883934  32.243256  29.195255  32.243256  116.655891  ...  42.257084  35.59005  29.268459  29.195255  29.195255
+name            1          2          3  ...         10         11         12
+0       35.883934  32.243259  29.195257  ...  29.268463  29.195257  29.195257
+3600    35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+7200    35.883934  32.243256  29.195255  ...  29.268459  29.195255  29.195255
+10800   35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+14400   35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+...           ...        ...        ...  ...        ...        ...        ...
+590400  35.883934  32.243256  29.195255  ...  29.268459  29.195255  29.195255
+594000  35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+597600  35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+601200  35.883934  32.243256  29.195255  ...  29.268463  29.195255  29.195255
+604800  35.883934  32.243256  29.195255  ...  29.268459  29.195255  29.195255
+
 [169 rows x 12 columns]
 ```
 
@@ -706,8 +740,86 @@ The final network is shown in Figure 4.
 
 Final cost is: <b>80761.02720000001</b>
 
-Running our network in Epanet2.2 we get no errors.
-
-<img src="images/example1/Network1Epanet.png">
-
 ### NETWORK 2 - 14 PIPES NETWORK
+
+This network (https://uknowledge.uky.edu/wdst_systems/9/) is given on the next Figure.
+
+<img src="images/example2/Network2.png">
+
+Criticality analysis of the initial network is given on the next Figure.
+
+<img src="images/example2/Network2CA.png">
+
+Initial cost is: <b>421828.93000000005</b>
+
+We will first perform optimization without criticality analysis to see how well algorithm optimizes without taking in account the number of impacted junctions. Next, we will perform optimization but we will use criticality penalty to keep our network junction impact below the initial junction impact (before optimization).
+
+Network without criticality analysis and corresponding convergence are presented on the next Figures.
+
+<img src="images/example2/Network2Conv.png">
+
+<img src="images/example2/Network2Layout.png">
+
+Final cost is: <b>351886.63</b>
+
+Criticality analysis is given with next Figure.
+
+<img src="images/example2/Network2CricitalityWithoutCA.png">
+
+Network with criticality analysis and corresponding convergence are presented on the next Figures.
+
+<img src="images/example2/Network2LayoutWithCA.png">
+
+<img src="images/example2/Network2ConvWithCA.png">
+
+Final cost is: <b>357131.89999999997</b>
+
+Criticality analysis is given in the next Figure.
+
+<img src="images/example2/Network2CAWithCA.png">
+
+This example was run through EPANET2.2 and we obtained the same results and simulation run without problems.
+
+<img src="images/example2/Network2Epanet.png">
+
+As we see the final cost is bigger in the case with criticality analysis but we maintain the desired number of impacted junctions. Pressure is maintained in the both cases.
+
+### EXAMPLE 3 - ANYTOWN
+
+For the third example we used the Anytown network presented on the next Figure.
+
+<img src="images/example3/Network3.png">
+
+Number of impacted junctions is 0.
+
+<img src="images/example3/Network3CA.png">
+
+Initial cost is: <b>517497.97439999995</b>.
+
+We performed optimization with criticality analysis and without criticality analysis.
+
+For the first optimization case without criticality analysis we used GA with 300 generations and a population of 20 and got the following convergence plot and network layout.
+
+<img src="images/example3/Network3Conv.png">
+
+<img src="images/example3/Network3Layout.png">
+
+Minimum pressures are satisfied and the final cost is <b>171738.34080000003</b>. But the final junction impact is 25.
+
+<img src="images/example3/Network3CAWithout.png">
+
+For the second part we performed optimization but with criticality analysis and a goal to obtain minimum cost while satisfying the number of impacted junctions <b>0</b> same as the initial network. For the comparison we used the same GA parameters.
+
+The convergence plot and final layout are given on next Figures.
+
+<img src="images/example3/Network3ConvWithCA.png">
+
+<img src="images/example3/Network3LayoutWithCA.png">
+
+Final cost is: <b>165061.39200000005</b>.
+
+Criticality analysis of the new layout give 0 impacted junctions.
+
+<img src="images/example3/Network3CAWithCA.png">
+
+Simulations are run through Epanet2.2 without any simulation errors.

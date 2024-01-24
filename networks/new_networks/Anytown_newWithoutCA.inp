@@ -1,0 +1,207 @@
+; Filename: networks/Anytown.inp
+; WNTR: 1.1.0
+; Created: 2024-01-25 00:39:13
+[TITLE]
+Anytown network model
+
+[JUNCTIONS]
+;ID                      Elevation       Demand Pattern                 
+ 20                                20             500 1                          ;
+ 30                                50             200 1                          ;
+ 40                                50             200 1                          ;
+ 50                                50             200 1                          ;
+ 55                                80               0 1                          ;
+ 60                                50             500 1                          ;
+ 70                                50             500 1                          ;
+ 75                                80               0 1                          ;
+ 80                                50             500 1                          ;
+ 90                                50            1000 1                          ;
+ 100                               50             500 1                          ;
+ 110                               50             500 1                          ;
+ 115                               80               0 1                          ;
+ 120                              120             200 1                          ;
+ 130                              120             200 1                          ;
+ 140                               80             200 1                          ;
+ 150                              120             200 1                          ;
+ 160                              120             800 1                          ;
+ 170                              120             200 1                          ;
+
+[RESERVOIRS]
+;ID                                   Head                  Pattern
+ 10                                10                            ;
+ 65                               215                            ;
+ 165                              215                            ;
+
+[TANKS]
+;ID                              Elevation           Init Level            Min Level            Max Level             Diameter           Min Volume Volume Curve         Overflow            
+
+[PIPES]
+;ID                   Node1                Node2                              Length             Diameter            Roughness           Minor Loss               Status
+ 2                    20                   70                             12000    4.9109997723              70               0                 Open   ;
+ 12                   70                   90                               600    10.795894483              70               0                 Open   ;
+ 16                   90                   60                               600    25.852536503              70               0                 Open   ;
+ 18                   60                   80                               600     18.38256931              70               0                 Open   ;
+ 22                   90                   150                              600    10.973662416              70               0                 Open   ;
+ 24                   90                   100                              600    12.660541375              70               0                 Open   ;
+ 34                   30                   50                               600    9.4186316529             120               0                 Open   ;
+ 36                   40                   50                               600    6.3549960561             120               0                 Open   ;
+ 38                   50                   80                               600    12.970286555             120               0                 Open   ;
+ 48                   100                  110                              600    4.9574827466              70               0                 Open   ;
+ 50                   110                  160                              600    10.470702544             120               0                 Open   ;
+ 52                   110                  120                              600    6.5387372593             120               0                 Open   ;
+ 60                   130                  170                              600    14.938700656             120               0                 Open   ;
+ 62                   160                  140                              600    21.756210139             120               0                 Open   ;
+ 64                   170                  140                            12000    12.959582713             120               0                 Open   ;
+ 68                   140                  115                             6000    4.5105285871             130               0                 Open   ;
+ 74                   50                   55                              6000    4.1799251009             130               0                 Open   ;
+ 76                   55                   75                              6000    4.0012865873             130               0                 Open   ;
+ 78                   60                   65                               100    28.902507173             120               0                 Open   ;
+ 80                   165                  160                              100    12.580533634             120               0                 Open   ;
+
+[PUMPS]
+;ID                   Node1                Node2                Properties          
+ 82                   10                   20                   HEAD     1                      ;
+
+[VALVES]
+;ID                   Node1                Node2                            Diameter Type              Setting           Minor Loss
+
+[TAGS]
+;type      name       tag       
+
+[DEMANDS]
+;ID        Demand     Pattern   
+
+[STATUS]
+;ID        Setting   
+
+[PATTERNS]
+;ID        Multipliers
+
+1 0.700000 0.600000 1.200000 1.300000 1.200000 1.100000
+1 1.000000 0.900000
+
+[CURVES]
+;ID         X-Value      Y-Value     
+;PUMP: 1
+ 1              0.000000   300.000000   ;
+ 1           2000.000000   292.000000   ;
+ 1           4000.000000   270.000000   ;
+ 1           6000.000000   230.000000   ;
+ 1           8000.000000   181.000000   ;
+
+;EFFICIENCY: E1
+ E1             0.000000     0.000000   ;
+ E1          2000.000000    50.000000   ;
+ E1          4000.000000    65.000000   ;
+ E1          6000.000000    55.000000   ;
+ E1          8000.000000    40.000000   ;
+
+
+[CONTROLS]
+
+[RULES]
+
+[ENERGY]
+GLOBAL EFFICIENCY      65.0000
+GLOBAL PRICE           0.0000
+DEMAND CHARGE          0.0000
+PUMP 82         EFFIC   E1
+
+[EMITTERS]
+;ID        Flow coefficient
+
+[QUALITY]
+
+[SOURCES]
+;Node      Type       Quality    Pattern   
+
+[REACTIONS]
+;Type           Pipe/Tank               Coefficient
+
+ ORDER BULK 1
+ ORDER TANK 1
+ ORDER WALL 1
+ GLOBAL BULK 0.0000    
+ GLOBAL WALL 0.0000    
+ LIMITING POTENTIAL 0.0000    
+ ROUGHNESS CORRELATION 0.0000    
+
+[MIXING]
+;Tank ID             Model Fraction
+
+[TIMES]
+DURATION             24:00:00
+HYDRAULIC TIMESTEP   03:00:00
+QUALITY TIMESTEP     00:05:00
+PATTERN TIMESTEP     03:00:00
+PATTERN START        00:00:00
+REPORT TIMESTEP      03:00:00
+REPORT START         00:00:00
+START CLOCKTIME      00:00:00 AM
+RULE TIMESTEP        00:06:00
+STATISTIC            NONE      
+
+[REPORT]
+STATUS     YES
+SUMMARY    NO
+PAGE       0
+
+[OPTIONS]
+UNITS                GPM                 
+HEADLOSS             H-W                 
+SPECIFIC GRAVITY     1
+VISCOSITY            1
+TRIALS               40
+ACCURACY             0.001
+CHECKFREQ            2
+MAXCHECK             10
+UNBALANCED           CONTINUE 10
+PATTERN              1                   
+DEMAND MULTIPLIER    1
+DEMAND MODEL         PDA
+MINIMUM PRESSURE     0.00
+REQUIRED PRESSURE    29.99
+PRESSURE EXPONENT    0.5
+EMITTER EXPONENT     0.5
+QUALITY              Chlorine mg/L
+DIFFUSIVITY          1
+TOLERANCE            0.01
+
+[COORDINATES]
+;Node      X-Coord    Y-Coord   
+20               6391.600000000       4257.810000000
+30               6723.630000000       6181.640000000
+40               5327.150000000       7500.000000000
+50               3959.960000000       7050.780000000
+55               3081.050000000       7431.640000000
+60               5366.210000000       6044.920000000
+70               5473.630000000       4931.640000000
+75               2270.510000000       7089.840000000
+80               4340.820000000       6230.470000000
+90               4838.870000000       5410.160000000
+100              4428.710000000       4765.630000000
+110              4125.980000000       3945.310000000
+115              1655.270000000       6787.110000000
+120              3413.090000000       3281.250000000
+130              2055.660000000       3896.480000000
+140              2124.020000000       6015.630000000
+150              3891.600000000       5566.410000000
+160              2895.510000000       4765.630000000
+170               825.200000000       5126.950000000
+10               7241.210000000       3750.000000000
+65               5297.850000000       6367.190000000
+165              2377.930000000       4892.580000000
+
+[VERTICES]
+;Link      X-Coord    Y-Coord   
+62               2133.790000000       6064.450000000
+80               2807.620000000       4755.860000000
+
+[LABELS]
+
+[BACKDROP]
+DIMENSIONS    0.00    0.00    10000.00    10000.00
+UNITS    NONE
+OFFSET    0.00    0.00
+
+[END]

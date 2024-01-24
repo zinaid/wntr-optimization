@@ -1,0 +1,159 @@
+; Filename: networks/new_networks/fourteenpipes_new_new.inp
+; WNTR: 1.1.0
+; Created: 2024-01-24 15:05:38
+[TITLE]
+Gessler 1985 example
+
+[JUNCTIONS]
+;ID                      Elevation       Demand Pattern                 
+ 2                             320.04           12.62                            ;
+ 3                             326.14           12.62                            ;
+ 4                             332.23               0                            ;
+ 6                              298.7           18.93                            ;
+ 7                             295.66           18.93                            ;
+ 8                             292.61           18.93                            ;
+ 9                             289.56           12.62                            ;
+ 10                            289.56           18.93                            ;
+ 11                            292.61           18.93                            ;
+ 12                            289.56           12.62                            ;
+
+[RESERVOIRS]
+;ID                                   Head                  Pattern
+ 1                             365.76                            ;
+ 5                                380                            ;
+
+[TANKS]
+;ID                              Elevation           Init Level            Min Level            Max Level             Diameter           Min Volume Volume Curve         Overflow            
+
+[PIPES]
+;ID                   Node1                Node2                              Length             Diameter            Roughness           Minor Loss               Status
+ 5                    2                    6                               1609    106.12857661              80               0                 Open   ;
+ 2                    2                    3                               1609      615.232162              80               0                 Open   ;
+ 3                    3                    4                               1609    303.02974978             100               0                 Open   ;
+ 7                    6                    7                               1609     125.9998982             100               0                 Open   ;
+ 10                   7                    10                              1609    706.76153826             100               0                 Open   ;
+ 12                   9                    10                              1609    264.99758513             100               0                 Open   ;
+ 6                    4                    8                               1609    572.11882259             120               0                 Open   ;
+ 11                   8                    11                              1609    553.21046484             120               0                 Open   ;
+ 13                   10                   11                              1609     673.0792415             120               0                 Open   ;
+ 14                   11                   12                              1609    475.23822178             120               0                 Open   ;
+ 1                    1                    2                               4828    572.21813473              75               0                 Open   ;
+ 4                    5                    4                               6437    265.86053659             120               0                 Open   ;
+
+[PUMPS]
+;ID                   Node1                Node2                Properties          
+
+[VALVES]
+;ID                   Node1                Node2                            Diameter Type              Setting           Minor Loss
+
+[TAGS]
+;type      name       tag       
+
+[DEMANDS]
+;ID        Demand     Pattern   
+
+[STATUS]
+;ID        Setting   
+
+[PATTERNS]
+;ID        Multipliers
+
+[CURVES]
+;ID         X-Value      Y-Value     
+
+[CONTROLS]
+
+[RULES]
+
+[ENERGY]
+GLOBAL EFFICIENCY      75.0000
+GLOBAL PRICE           0.0000
+DEMAND CHARGE          0.0000
+
+[EMITTERS]
+;ID        Flow coefficient
+
+[QUALITY]
+
+[SOURCES]
+;Node      Type       Quality    Pattern   
+
+[REACTIONS]
+;Type           Pipe/Tank               Coefficient
+
+ ORDER BULK 1
+ ORDER TANK 1
+ ORDER WALL 1
+ GLOBAL BULK 0.0000    
+ GLOBAL WALL 0.0000    
+ LIMITING POTENTIAL 0.0000    
+ ROUGHNESS CORRELATION 0.0000    
+
+[MIXING]
+;Tank ID             Model Fraction
+
+[TIMES]
+DURATION             00:00:00
+HYDRAULIC TIMESTEP   01:00:00
+QUALITY TIMESTEP     01:00:00
+PATTERN TIMESTEP     01:00:00
+PATTERN START        00:00:00
+REPORT TIMESTEP      01:00:00
+REPORT START         00:00:00
+START CLOCKTIME      00:00:00 AM
+RULE TIMESTEP        00:06:00
+STATISTIC            NONE      
+
+[REPORT]
+SUMMARY    NO
+PAGE       0
+
+[OPTIONS]
+UNITS                LPS                 
+HEADLOSS             H-W                 
+SPECIFIC GRAVITY     1
+VISCOSITY            1
+TRIALS               40
+ACCURACY             0.001
+CHECKFREQ            2
+MAXCHECK             10
+UNBALANCED           CONTINUE 10
+DEMAND MULTIPLIER    1
+DEMAND MODEL         PDA
+MINIMUM PRESSURE     0.00
+REQUIRED PRESSURE    21.10
+PRESSURE EXPONENT    0.5
+EMITTER EXPONENT     0.5
+QUALITY              NONE                
+DIFFUSIVITY          1
+TOLERANCE            0.01
+
+[COORDINATES]
+;Node      X-Coord    Y-Coord   
+2                6000.000000000       3000.000000000
+3                7628.350000000       3002.400000000
+4                9241.450000000       3002.400000000
+6                5999.440000000       1199.520000000
+7                7628.350000000       1199.520000000
+8                9241.450000000       1199.520000000
+9                5999.440000000       -540.100000000
+10               7628.350000000       -540.100000000
+11               9241.450000000       -540.100000000
+12              10696.410000000       -540.100000000
+1                4924.040000000       4283.390000000
+5               10680.590000000       4726.200000000
+
+[VERTICES]
+;Link      X-Coord    Y-Coord   
+1                4924.040000000       3445.210000000
+1                4924.040000000       3002.400000000
+4               10680.590000000       3002.400000000
+
+[LABELS]
+
+[BACKDROP]
+DIMENSIONS    3600.000    -3450.000    12400.000    6450.000
+UNITS    NONE
+OFFSET    0.00    0.00
+
+[END]

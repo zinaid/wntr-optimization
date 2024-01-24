@@ -1,15 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from optimization import optimize_water_network
-from network import readFile, saveFile, plot_network_with_consumers, remove_small_diameter_pipes, getJunctionPressures, getStartingPressures, getMinPressure, runSimulation, getPipeCost, getPressure, getMaxPressure, checkMinConstraints, updateSolution, printOptimalSolution, runCriticalityAnalysis
+from network import readFile, saveFile, plot_network_with_consumers, remove_small_diameter_pipes, getJunctionPressures, getStartingPressures, getMinPressure, runSimulation, getPipeCost, getPressure, getMaxPressure, checkMinConstraints, updateSolution, printOptimalSolution
+from criticality import runCriticality
 
 if __name__ == "__main__":
-    print("####Program starts####")
-    network_name = "19Pipes"
-    wn = readFile("networks/"+network_name+".inp")
-    print("####Initial readings####")
-    print("Initial pipe cost: ", getPipeCost(wn))
+    print("####Program starts####") 
 
+    network_name = "Anytown"
+    wn = readFile("networks/"+network_name+".inp")
+
+    print("####Initial readings####")
+
+    print("Initial pipe cost: ", getPipeCost(wn))
+    junction_target = runCriticality("networks/"+network_name+".inp")
     pipe_diameters = wn.query_link_attribute('diameter')
     print("Initial Pipe Diameters:")
     print(pipe_diameters)
@@ -36,11 +40,6 @@ if __name__ == "__main__":
     # Setting thresholds
     min_pressure = starting_pressures
     diameter_threshold = 0.1
-    
-    #junction_max = runCriticalityAnalysis(wn, min_pressure)
-    #print("Initial junction impact:", junction_max)
-    # We set junction target to be the same as the initial network junction impact
-    junction_target = 0
 
     print("####Starting optimization####")
     res = optimize_water_network(wn, min_pressure, junction_target, diameter_threshold)
@@ -72,8 +71,9 @@ if __name__ == "__main__":
     print("Final list of Junction(consumers) pressures:")
     print(junction_pressures)
 
-    plot_network_with_consumers(wn, junction_pressures)
-    saveFile(wn, network_name)
+    network_name_to_save = network_name+"_newWithoutCA.inp"
+    saveFile(wn, network_name_to_save)
+    final_junction= runCriticality("networks/new_networks/"+network_name_to_save+"")
 
-    #final_junction = runCriticalityAnalysis(wn, min_pressure)
-    #print("Final junction impact:", final_junction)
+    plot_network_with_consumers(wn, junction_pressures)
+    

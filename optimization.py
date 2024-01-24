@@ -4,7 +4,8 @@ from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.optimize import minimize
 from pymoo.termination import get_termination
 from pymoo.core.problem import ElementwiseProblem
-from network import runSimulation, getPipeCost, runCriticalityAnalysis, remove_small_diameter_pipes
+from network import runSimulation, getPipeCost, remove_small_diameter_pipes, saveMediumFile
+from criticality import runCriticality
 import copy
 import networkx as nx
 
@@ -34,6 +35,7 @@ class WaterNetworkProblem(ElementwiseProblem):
 
         connectivity_penalty = 0.0
         pressure_penalty_low = 0.0
+        junction_penalty = 0.0
         if nx.is_connected(uG) is True:
             connectivity_penalty = 0.0
             results = runSimulation(wn_copy)
@@ -45,12 +47,13 @@ class WaterNetworkProblem(ElementwiseProblem):
 
                 # If we want to turn off number of junction impact just comment these simulations
                 # and remove junction penalty
-                #num_impacted_junctions = runCriticalityAnalysis(self.wn, self.min_pressure)
-                #junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
+            saveMediumFile(wn_copy, "networks/new_networks/Anytown_medium.inp")
+            num_impacted_junctions = runCriticality("networks/new_networks/Anytown_medium.inp")
+            junction_penalty = np.maximum(0, num_impacted_junctions - self.junction_target)
         else:
             connectivity_penalty = 100.0
 
-        total_penalty = pressure_penalty_low + connectivity_penalty
+        total_penalty = pressure_penalty_low + connectivity_penalty + junction_penalty
 
         objective = total_cost
         out["F"] = np.array([objective])
@@ -58,7 +61,7 @@ class WaterNetworkProblem(ElementwiseProblem):
 
 def optimize_water_network(wn, threshold, junction_target, diameter_threshold):
     water_network_problem = WaterNetworkProblem(wn, threshold, junction_target, diameter_threshold)
-    termination = get_termination("n_gen", 400)
+    termination = get_termination("n_gen", 300)
     algorithm = GA(pop_size=20, eliminate_duplicates=True)
     res = minimize(water_network_problem, algorithm, termination, seed=1, verbose=True, save_history=True)
     return res
