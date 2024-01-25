@@ -37,6 +37,9 @@ def runCriticality(inp):
         wn.options.time.report_timestep = 3600 
         wn.options.time.hydraulic_timestep = 3600 
         pipe = wn.get_link(pipe_name)
+        #Before adding the control
+        #initial_pipe_status = wn.get_link(pipe_name).status
+        #print("Initial Pipe Status:", initial_pipe_status)
         act = wntr.network.controls.ControlAction(pipe, 'status', 0)
         cond = wntr.network.controls.SimTimeCondition(wn, 'Above',start_time)
         ctrl = wntr.network.controls.Control(cond, act)
@@ -47,12 +50,14 @@ def runCriticality(inp):
             sim_pressure = sim_results.node['pressure'].loc[start_time::,nzd_junct]
             sim_pressure_below_pmin = sim_pressure.columns[(sim_pressure< minimum_pressure).any()]
             impacted_junctions = set(sim_pressure_below_pmin) - set(normal_pressure_below_pmin)
+            # After adding the control
+            #pipe_status_after_control = wn.get_link(pipe_name).status
+            #print("Pipe Status After Control:", pipe_status_after_control)
         except Exception as e:
             impacted_junctions = None
             print(pipe_name, 'Failed:', e)
         finally:
             analysis_results[pipe_name] = impacted_junctions 
-
     num_junctions_impacted = {}
     for pipe_name, impacted_junctions in analysis_results.items():
         if impacted_junctions is not None: 

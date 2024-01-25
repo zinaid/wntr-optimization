@@ -1,6 +1,6 @@
 # WATER NETWORK RESILIENCE TOOL - OPTIMIZATION
 
-We are performing cost optimization of a water network system using water network resilience tool (WNTR).
+We are performing cost optimization of a water network system using the Water Network Resilience Tool (WNTR).
 
 ## MATHEMATICAL FORMULATION
 
@@ -132,7 +132,7 @@ $P_{pressure} = \sum_{node} max(0, P_{min}-P_{node})$
 
 ### PIPE CRITICALITY CONSTRAINT:
 
-We perform criticality analysis by doing <b>n+1</b> simulations where we turn off one pipe at a time and calculate a number of impacted junctions by that closure. Finally, we find the total number of impacted junctions and create a penalty function for our cost function. We set a threshold for junctions impacted as maxJunctions, and simJunctions as a total number of impacted junctions. We want to minimize the number of impacted junctions affected through pipe criticality analysis.
+We perform criticality analysis by doing <b>n+1</b> simulations where we turn off one pipe at a time and calculate a number of impacted junctions by that closure. Finally, we find the total number of impacted junctions and create a penalty function for our cost function. We set a threshold for junctions impacted as maxJunctions, and simJunctions as a total number of impacted junctions. We want to maintain the number of impacted junctions affected through pipe criticality analysis.
 
 $P_{junction} = max(0, maxJunctions - simJunctions)$
 
@@ -144,7 +144,7 @@ $$MIN f(x) = \sum_{i=1}^{n} Cost(x_i)\cdot l_i +P_{pressure}+P_{junction} + P_{c
 
 ## CODE STRUCTURE
 
-networks -> holds INP files of networks (We used Modified 19 Pipes Network, Fourteen Pipes Networ and Anytown Network). Here are also saved final INP files from optimization process.
+networks -> holds INP files of networks (We used Modified 19 Pipes Network, Fourteen Pipes Network and Anytown Network). Here are also saved final INP files from optimization process.
 
 main.py -> starting point of our program, where we define thresholds, print starting values of cost, pressures, diameters and call criticality analysis. Call optimization and then print final values, draw network and perform final criticality analysis.
 
@@ -752,7 +752,7 @@ Criticality analysis of the initial network is given on the next Figure.
 
 Initial cost is: <b>421828.93000000005</b>
 
-We will first perform optimization without criticality analysis to see how well algorithm optimizes without taking in account the number of impacted junctions. Next, we will perform optimization but we will use criticality penalty to keep our network junction impact below the initial junction impact (before optimization).
+We will first perform optimization without criticality analysis to see how well algorithm optimizes without taking in account the number of impacted junctions. Next, we will perform optimization but we will use criticality penalty to keep our network junction impact below or equal to the initial junction impact (before optimization).
 
 Network without criticality analysis and corresponding convergence are presented on the next Figures.
 
