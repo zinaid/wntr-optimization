@@ -814,7 +814,7 @@ The convergence plot and final layout are given on next Figures.
 
 <img src="images/example3/Network3ConvWithCA.png">
 
-<img src="images/example3/Network3LayoutWithCA.png">
+<img src="images/example3/Network3LayoutWithCa.png">
 
 Final cost is: <b>165061.39200000005</b>.
 
