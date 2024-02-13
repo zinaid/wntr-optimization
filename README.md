@@ -798,13 +798,13 @@ Initial cost is: <b>517497.97439999995</b>.
 
 We performed optimization with criticality analysis and without criticality analysis.
 
-For the first optimization case without criticality analysis we used GA with 300 generations and a population of 20 and got the following convergence plot and network layout.
+For the first optimization case without criticality analysis we used GA with 400 generations and a population of 20 and got the following convergence plot and network layout.
 
-<img src="images/example3/Network3Conv.png">
+<img src="images/example3/ANYTOWN400WITHOUTCA.png">
 
-<img src="images/example3/Network3Layout.png">
+<img src="images/example3/ANYTOWNNETWITHOUTCABIG.png">
 
-Minimum pressures are satisfied and the final cost is <b>171738.34080000003</b>. But the final junction impact is 25.
+Minimum pressures are satisfied and the final cost is <b>Final cost: 171215.30400000003</b>. But the final junction impact is 25.
 
 <img src="images/example3/Network3CAWithout.png">
 
@@ -812,11 +812,11 @@ For the second part we performed optimization but with criticality analysis and 
 
 The convergence plot and final layout are given on next Figures.
 
-<img src="images/example3/Network3ConvWithCA.png">
+<img src="images/example3/CONV400ANYTOWNWITHCA.png">
 
-<img src="images/example3/Network3LayoutWithCa.png">
+<img src="images/example3/ANYTOWNNET400WITHGA.png">
 
-Final cost is: <b>165061.39200000005</b>.
+Final cost is: <b>164185.39680000005</b>.
 
 Criticality analysis of the new layout give 0 impacted junctions.
 
