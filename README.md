@@ -2,6 +2,9 @@
 
 We are performing cost optimization of a water network system using water network resilience tool (WNTR).
 
+This work is published in:
+Kapić, Z., Ivić, S. (2024). Cost Minimization of Water Distribution Systems Using Simulation-Based Optimization. In: Ademović, N., Akšamija, Z., Karabegović, A. (eds) Advanced Technologies, Systems, and Applications IX. IAT 2024. Lecture Notes in Networks and Systems, vol 1143. Springer, Cham. https://doi.org/10.1007/978-3-031-71694-2_10
+
 ## MATHEMATICAL FORMULATION
 
 ### Decision variables:
